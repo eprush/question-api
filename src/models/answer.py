@@ -16,10 +16,9 @@ class Answer(BaseModel):
     __tablename__ = "answer"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    question_id: Mapped[id] = mapped_column(ForeignKey("question.id"), nullable=False)
+    question_id: Mapped[id] = mapped_column(ForeignKey("question.id", ondelete="CASCADE"), nullable=False)
     user_id: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4, unique=True)
-    text: Mapped[str] = mapped_column()
+    text: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    def __repr__(self):
-        return f"Answer to question {self.question_id}, number {self.id}, was created on {self.created_at.date()}."
+    repr_cols_num = 2

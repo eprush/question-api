@@ -17,7 +17,3 @@ class Question(BaseModel):
     id: Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
-
-    def __repr__(self):
-        return f"Question number {self.id}: {self.text}. It was created on {self.created_at.date()}"
-
