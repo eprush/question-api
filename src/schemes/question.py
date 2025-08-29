@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict, model_validator
-from datetime import datetime
+import datetime
 
 from src.schemes.common import IDSchema
 from src.schemes.answer import AnswerSchema
@@ -17,17 +17,15 @@ class QuestionAddSchema(BaseModel):
 
 
 class QuestionSchema(QuestionAddSchema, IDSchema):
-    created_at: datetime = Field(
+    created_at: datetime.datetime = Field(
         ...,
-        le=datetime.now(),
         examples=["2025-06-02 23:05:09.377698+03"],
         description="Дата и время добавления вопроса."
     )
 
 
-class AnswersToQuestionSchema(BaseModel):
-    question: QuestionSchema
-    answers: tuple[AnswerSchema, ...] = Field(
+class QuestionRelSchema(QuestionSchema):
+    answers: list["AnswerSchema", ...] = Field(
         ...,
         description="Список ответов на данный вопрос.",
     )
@@ -35,13 +33,13 @@ class AnswersToQuestionSchema(BaseModel):
     @model_validator(mode="after")
     def is_answers_connect_with_question(self):
         for answer in self.answers:
-            if answer.question_id != self.question.id:
-                raise ValueError(f"The answer {answer.id} does not match the question {self.question.id}")
-        return
+            if answer.question_id != self.id:
+                raise ValueError(f"The answer {answer.id} does not match the question {self.id}")
+        return self
 
 
-class AllQuestionsSchema(BaseModel):
-    questions: tuple[QuestionSchema, ...] = Field(
+class ListQuestionsSchema(BaseModel):
+    questions: list[QuestionRelSchema, ...] = Field(
         ...,
         description="Список всех вопросов.",
     )

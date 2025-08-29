@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
-from datetime import datetime
+import datetime
 import uuid
 
 from src.schemes.common import IDSchema
@@ -23,9 +23,8 @@ class AnswerAddSchema(BaseModel):
 
 
 class AnswerSchema(AnswerAddSchema, IDSchema):
-    created_at: datetime = Field(
+    created_at: datetime.datetime = Field(
         ...,
-        le=datetime.now(),
         examples=["2025-06-02 23:05:09.377698+03"],
         description="Дата и время добавления ответа на вопрос."
     )
@@ -37,8 +36,9 @@ class AnswerSchema(AnswerAddSchema, IDSchema):
         examples=[0, 10,]
     )
 
+
 class AllAnswersSchema(BaseModel):
-    answers: tuple[AnswerSchema, ...] = Field(
+    answers: list[AnswerSchema, ...] = Field(
         ...,
         description="Список некоторых ответов.",
     )
