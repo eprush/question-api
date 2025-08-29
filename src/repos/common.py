@@ -3,42 +3,35 @@ A module describing repository, which can work with any data model
 """
 
 from sqlalchemy import insert, select, delete
-from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Generic
+from typing import Sequence
 
-from src.models.base import BaseModel
-from src.repos.base import AbstractRepository, T
+from src.repos.base import BaseRepository, M
 
 
-class Repository(AbstractRepository, Generic[T]):
-    model: BaseModel | type = T
-
-    def __init__(self, db_session: AsyncSession) -> None:
-        self._db_session = db_session
-
-    async def create(self, **values) -> BaseModel:
+class AlchemyRepository(BaseRepository[M]):
+    async def create(self, **values) -> M:
         """ A method for creating new record in the database. """
-        statement = insert(self.model).values(**values).returning(self.model)
+        statement = insert(self.Model).values(**values).returning(self.Model)
         result = await self._db_session.execute(statement)
         new_record = result.scalars().one()
 
         await self._db_session.commit()
         return new_record
 
-    async def get_by_id(self, _id: int) -> BaseModel | None:
+    async def get_by_id(self, _id: int) -> M | None:
         """ Method for getting an animal by uuid. """
-        statement = select(self.model).filter_by(id=_id)
+        statement = select(self.Model).filter_by(id=_id)
         result = await self._db_session.execute(statement)
         return result.scalars().one_or_none()
 
-    async def get_all(self, **where) -> tuple[BaseModel, ...]:
+    async def get_all(self, **where) -> Sequence:
         """ Method for get all records in the database. """
-        statement = select(self.model).filter_by(**where)
+        statement = select(self.Model).filter_by(**where)
         result = await self._db_session.execute(statement)
         return tuple(result.scalars().all())
 
-    async def delete_by_id(self, _id: int) -> BaseModel | None:
-        statement = delete(self.model).filter_by(id=_id).returning(self.model)
+    async def delete_by_id(self, _id: int) -> M | None:
+        statement = delete(self.Model).filter_by(id=_id).returning(self.Model)
         result = await self._db_session.execute(statement)
         deleted_record = result.scalars().one_or_none()
 
