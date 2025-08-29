@@ -8,6 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from fastapi import Depends
 
 from src.core.config import Settings, get_app_settings
+from src.models.question import Question
+from src.models.answer import Answer
 from src.services.question import QuestionService
 from src.services.answer import AnswerService
 
@@ -42,12 +44,12 @@ DatabaseDependence = Annotated[AsyncSession, Depends(get_db)]
 
 async def get_question_service(db: DatabaseDependence) -> QuestionService:
     """Returns an instance of QuestionService."""
-    return QuestionService(db_session=db)
+    return QuestionService(Question, db_session=db)
 
 
 async def get_answer_service(db: DatabaseDependence) -> AnswerService:
     """Returns an instance of AnswerService."""
-    return AnswerService(db_session=db)
+    return AnswerService(Answer, db_session=db)
 
 
 QuestionServiceDependence = Annotated[QuestionService, Depends(get_question_service)]

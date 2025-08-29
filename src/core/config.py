@@ -9,6 +9,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     """Configuration settings for the application."""
+    environment: str = "development"
 
     postgres_host: str = "localhost"
     postgres_port: str = "5432"
