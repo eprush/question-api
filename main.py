@@ -2,19 +2,30 @@
 The script that runs the application
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import uvicorn
+import logging
 
 from src.core.config import (
     Settings,
     get_app_settings,
 )
 from src.endpoints.api import routers
+from src.core.logging import setup_json_logging
+from src.core.handlers import (
+    http_exception_handler,
+    all_exception_handler,
+)
 
 
 def get_application() -> FastAPI:
     """Returns the FastAPI application instance."""
     settings: Settings = get_app_settings()
+
+    if settings.environment != "development":
+        setup_json_logging()
+        logger = logging.getLogger("question-api")
+        logger.warning("Running in production mode")
 
 
     application = FastAPI(
@@ -34,9 +45,12 @@ def get_application() -> FastAPI:
     )
 
     application.include_router(routers)
+
+    application.add_exception_handler(HTTPException, http_exception_handler)  # type: ignore
+    application.add_exception_handler(Exception, all_exception_handler)
     return application
 
 app = get_application()
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)
+    uvicorn.run("main:app", reload=True, port=8000)
