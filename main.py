@@ -50,7 +50,8 @@ def get_application() -> FastAPI:
     application.add_exception_handler(Exception, all_exception_handler)
     return application
 
+
 app = get_application()
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True, port=8000)
+    uvicorn.run("main:app", port=8000, reload=True)
