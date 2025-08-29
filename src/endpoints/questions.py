@@ -107,7 +107,7 @@ async def read_question_with_its_answer(
     status_code=status.HTTP_200_OK,
     responses={
         200: {
-            "model": QuestionRelSchema,
+            "model": QuestionSchema,
             "description": "Приложение доступно и работает.",
         },
         404: {
@@ -124,7 +124,7 @@ async def read_question_with_its_answer(
 async def delete_question_with_its_answer(
         id_code: int,
         question_service: QuestionServiceDependence,
-) -> QuestionRelSchema:
+) -> QuestionSchema:
     """ An endpoint for deleting a question by id and all the answers to it. """
     try:
         return await question_service.delete(id_code)

@@ -18,10 +18,10 @@ class QuestionService(BaseService[Question]):
             return QuestionRelSchema.model_validate(obj)
         raise ValueError(f"A record number {_id} was not found.")
 
-    async def delete(self, _id: int) -> QuestionRelSchema:
+    async def delete(self, _id: int) -> QuestionSchema:
         obj = await self._repository.delete_by_id(_id)
         if obj is not None:
-            return QuestionRelSchema.model_validate(obj)
+            return QuestionSchema.model_validate(obj)
         raise ValueError(f"A question number {_id} was not found.")
 
     async def get_all(self, **where) -> ListQuestionsSchema:
