@@ -5,16 +5,19 @@ A module that implements endpoints of the type /questions
 
 from fastapi import APIRouter, status, HTTPException
 
-from schemes.question import QuestionAddSchema
 from src.core.dependencies  import (
     QuestionServiceDependence,
     AnswerServiceDependence,
 )
 from src.schemes.question import (
+    QuestionAddSchema,
     QuestionSchema,
-    AllQuestionsSchema,
-    IDSchema,
-    AnswersToQuestionSchema,
+    QuestionRelSchema,
+    ListQuestionsSchema,
+)
+from src.schemes.answer import (
+    AnswerAddSchema,
+    AnswerSchema,
 )
 from src.schemes.problem import ProblemDetail
 
@@ -27,7 +30,7 @@ router = APIRouter(prefix="/questions", tags=["Работа с вопросам�
     status_code=status.HTTP_200_OK,
     responses={
         200: {
-            "model": AllQuestionsSchema,
+            "model": ListQuestionsSchema,
             "description": "Приложение доступно и работает.",
         },
         500: {
@@ -39,9 +42,11 @@ router = APIRouter(prefix="/questions", tags=["Работа с вопросам�
 )
 async def read_all_questions(
         question_service: QuestionServiceDependence,
-) -> AllQuestionsSchema:
+) -> ListQuestionsSchema:
     """ An endpoint for getting a list of all existing questions. """
-    return question_service.get_all()
+    tmp = await question_service.get_all()
+    print(tmp)
+    return tmp
 
 
 @router.post(
@@ -61,10 +66,10 @@ async def read_all_questions(
 )
 async def add_new_question(
         question_service: QuestionServiceDependence,
-        data_to_add: QuestionAddSchema,
+        question_to_add: QuestionAddSchema,
 ) -> QuestionSchema:
     """ An endpoint for adding a new question. """
-    return question_service.create(data_to_add.text)
+    return await question_service.create(question_to_add.text)
 
 
 @router.get(
@@ -72,7 +77,7 @@ async def add_new_question(
     status_code=status.HTTP_200_OK,
     responses={
         200: {
-            "model": AnswersToQuestionSchema,
+            "model": QuestionRelSchema,
             "description": "Приложение доступно и работает.",
         },
         404: {
@@ -87,21 +92,14 @@ async def add_new_question(
     description="Эндпоинт для получения вопроса по id и всех ответов к нему.",
 )
 async def read_question_with_its_answer(
-        id_code: IDSchema,
+        id_code: int,
         question_service: QuestionServiceDependence,
-        answer_service: AnswerServiceDependence,
-) -> AnswersToQuestionSchema:
+) -> QuestionRelSchema:
     """ An endpoint for getting a question by id and all the answers to it. """
     try:
-        question = await question_service.get(id_code.id)
+        return await question_service.get(id_code)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Указан несуществующий номер вопроса.")
-    answers = await answer_service.get_all(id_code.id)
-
-    return AnswersToQuestionSchema(
-        question=question,
-        answers=answers
-    )
 
 
 @router.delete(
@@ -109,7 +107,7 @@ async def read_question_with_its_answer(
     status_code=status.HTTP_200_OK,
     responses={
         200: {
-            "model": AnswersToQuestionSchema,
+            "model": QuestionRelSchema,
             "description": "Приложение доступно и работает.",
         },
         404: {
@@ -124,19 +122,48 @@ async def read_question_with_its_answer(
     description="Эндпоинт для удаления вопроса по id и всех ответов к нему.",
 )
 async def delete_question_with_its_answer(
-        id_code: IDSchema,
+        id_code: int,
         question_service: QuestionServiceDependence,
-        answer_service: AnswerServiceDependence,
-) -> AnswersToQuestionSchema:
-    """ An endpoint for getting a question by id and all the answers to it. """
+) -> QuestionRelSchema:
+    """ An endpoint for deleting a question by id and all the answers to it. """
     try:
-        question = await question_service.delete(id_code.id)
+        return await question_service.delete(id_code)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Указан несуществующий номер вопроса.")
-    answers = await answer_service.get_all(id_code.id)
 
-    return AnswersToQuestionSchema(
-        question=question,
-        answers=answers
+
+@router.post(
+    "/{id_code}/answers",
+    status_code=status.HTTP_200_OK,
+    responses={
+        200: {
+            "model": AnswerSchema,
+            "description": "Приложение доступно и работает.",
+        },
+        404: {
+            "model": ProblemDetail,
+            "description": "Несуществующий вопрос.",
+        },
+        500: {
+            "model": ProblemDetail,
+            "description": "Внутренняя ошибка сервера.",
+        },
+    },
+    description="Эндпоинт для добавления ответа к вопросу по id.",
+)
+async def add_new_answer(
+        id_code: int,
+        answer_to_add: AnswerAddSchema,
+        question_service: QuestionServiceDependence,
+        answer_service: AnswerServiceDependence,
+) -> AnswerSchema:
+    """ An endpoint for adding an answer to a question by id. """
+    try:
+        await question_service.get(id_code)
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Указан несуществующий номер вопроса.")
+    answer = await answer_service.create(answer_to_add.text,
+        question_id=id_code,
+        user_id=answer_to_add.user_id
     )
-
+    return answer
