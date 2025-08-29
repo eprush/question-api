@@ -1,18 +1,28 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from src.services.base import BaseService
 from src.models.answer import Answer
-from src.repos.common import Repository
-from src.repos.base import AbstractRepository
 from src.schemes.answer import (
+    AnswerSchema,
     AllAnswersSchema,
 )
 
 
-class AnswerService:
-    def __init__(self, db_session: AsyncSession) -> None:
-        self._repository: AbstractRepository[Answer] = Repository[Answer](db_session= db_session)
+class AnswerService(BaseService[Answer]):
+    async def create(self, text: str, **values) -> AnswerSchema:
+        new_obj = await self._repository.create(text=text, **values)
+        return AnswerSchema.model_validate(new_obj)
 
-    async def get_all(self, _id: int) -> AllAnswersSchema:
-        all_answers = await self._repository.get_all(question_id=_id)
-        return AllAnswersSchema(answers=all_answers)
+    async def get(self, _id: int) -> AnswerSchema:
+        obj = await self._repository.get_by_id(_id)
+        if obj is not None:
+            return AnswerSchema.model_validate(obj)
+        raise ValueError(f"A record number {_id} was not found.")
 
+    async def delete(self, _id: int) -> AnswerSchema:
+        obj = await self._repository.delete_by_id(_id)
+        if obj is not None:
+            return AnswerSchema.model_validate(obj)
+        raise ValueError(f"A record number {_id} was not found.")
+
+    async def get_all(self, **where) -> AllAnswersSchema:
+        all_objs = await self._repository.get_all(**where)
+        return AllAnswersSchema(answers=all_objs)
