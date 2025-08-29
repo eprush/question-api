@@ -38,7 +38,7 @@ async def read_answer(
 ) -> AnswerSchema:
     """ An endpoint for getting an answer by id. """
     try:
-        return answer_service.get(id_code)
+        return await answer_service.get(id_code)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Указан несуществующий номер ответа.")
 
@@ -64,6 +64,6 @@ async def delete_answer(
 ) -> AnswerSchema:
     """ An endpoint for deleting an answer by id. """
     try:
-        return answer_service.delete(id_code)
+        return await answer_service.delete(id_code)
     except ValueError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Указан несуществующий номер ответа.")
