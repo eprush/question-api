@@ -16,9 +16,10 @@ class Answer(BaseModel):
 
     __tablename__ = "answers"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
     question_id: Mapped[id] = mapped_column(ForeignKey("questions.id", ondelete="CASCADE"), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
-    user_id: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4, unique=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(default=uuid.uuid4)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     question: Mapped["Question"] = relationship("Question", back_populates="answers")

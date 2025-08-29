@@ -15,6 +15,7 @@ class Question(BaseModel):
 
     __tablename__ = "questions"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
     text: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
