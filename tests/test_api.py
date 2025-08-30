@@ -5,7 +5,7 @@ import pytest_asyncio
 class TestQuestionsAPI:
     @pytest.mark.asyncio(loop_scope="session")
     @pytest.mark.parametrize("question", ("Что делать, чтобы быть счастливым?", ))
-    async def test_can_crud(self, async_client, question):
+    async def test_crud(self, async_client, question):
         request_data = {
             "text": "Что делать, чтобы быть счастливым?",
         }
