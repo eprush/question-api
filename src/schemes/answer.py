@@ -9,6 +9,7 @@ class AnswerAddSchema(BaseModel):
     text: str = Field(
         ...,
         max_length=1024,
+        min_length=1,
         description="Текст ответа на интересующий вопрос. Максимальный размер 1024 символа.",
         examples=["Легко! Просто используйте встроенную функцию print."]
     )

@@ -9,6 +9,7 @@ class QuestionAddSchema(BaseModel):
     text: str = Field(
         ...,
         max_length=128,
+        min_length=1,
         description="Текст интересующего вопроса. Максимальный размер 128 символов.",
         examples=["Как можно написать 'Hello, World!' на Python?"]
     )
