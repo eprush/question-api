@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.base import BaseModel
 
+
 M = TypeVar("M", bound=BaseModel)
 
 
@@ -24,7 +25,7 @@ class BaseRepository(ABC, Generic[M]):
         ...
 
     @abstractmethod
-    async def get_all(self, **where) -> Sequence:
+    async def get_all(self, **where) -> tuple[M, ...]:
         ...
 
     @abstractmethod

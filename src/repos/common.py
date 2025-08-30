@@ -24,7 +24,7 @@ class AlchemyRepository(BaseRepository[M]):
         result = await self._db_session.execute(statement)
         return result.scalars().one_or_none()
 
-    async def get_all(self, **where) -> Sequence:
+    async def get_all(self, **where) -> tuple[M, ...]:
         """ Method for get all records in the database. """
         statement = select(self.Model).filter_by(**where)
         result = await self._db_session.execute(statement)

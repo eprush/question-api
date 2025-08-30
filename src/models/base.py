@@ -2,11 +2,12 @@
 A module describing base model
 """
 from sqlalchemy.orm import DeclarativeBase
+from typing import Sequence
 
 
 class BaseModel(DeclarativeBase):
-    repr_cols_num = 1
-    repr_cols = tuple()
+    repr_cols_num: int = 1
+    repr_cols: Sequence[str] = tuple()
 
     def __repr__(self):
         columns = []

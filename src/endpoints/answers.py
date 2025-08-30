@@ -6,12 +6,8 @@ A module that implements endpoints of the type /answers
 from fastapi import APIRouter, status, HTTPException
 
 
-from src.core.dependencies import (
-    AnswerServiceDependence,
-)
-from src.schemes.answer import (
-    AnswerSchema,
-)
+from src.core.dependencies import AnswerServiceDependence
+from src.schemes.answer import AnswerSchema
 from src.schemes.problem import ProblemDetail
 
 

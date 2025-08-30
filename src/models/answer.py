@@ -23,6 +23,7 @@ class Answer(BaseModel):
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     question: Mapped["Question"] = relationship("Question", back_populates="answers")
+
     repr_cols_num = 3
 
 from src.models.question import Question # noqa: E402

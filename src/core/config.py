@@ -21,12 +21,12 @@ class Settings(BaseSettings):
     postgres_test_db: str = "test"
 
     @property
-    def url_asyncpg(self):
+    def url_asyncpg(self) -> str:
         return (f"postgresql+asyncpg://{self.postgres_username}:{self.postgres_password}@"
                 f"{self.postgres_host}:{self.postgres_port}/{self.postgres_db}")
 
     @property
-    def url_test_asyncpg(self):
+    def url_test_asyncpg(self) -> str:
         return (f"postgresql+asyncpg://{self.postgres_username}:{self.postgres_password}@"
                 f"{self.postgres_host}:{self.postgres_port}/{self.postgres_test_db}")
 
