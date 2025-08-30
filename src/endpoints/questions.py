@@ -44,9 +44,7 @@ async def read_all_questions(
         question_service: QuestionServiceDependence,
 ) -> ListQuestionsSchema:
     """ An endpoint for getting a list of all existing questions. """
-    tmp = await question_service.get_all()
-    print(tmp)
-    return tmp
+    return await question_service.get_all()
 
 
 @router.post(
