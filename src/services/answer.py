@@ -22,7 +22,3 @@ class AnswerService(BaseService[Answer]):
         if obj is not None:
             return AnswerSchema.model_validate(obj)
         raise ValueError(f"A record number {_id} was not found.")
-
-    async def get_all(self, **where) -> AllAnswersSchema:
-        all_objs = await self._repository.get_all(**where)
-        return AllAnswersSchema(answers=all_objs)
