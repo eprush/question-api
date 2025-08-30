@@ -2,7 +2,6 @@ from src.services.base import BaseService
 from src.models.answer import Answer
 from src.schemes.answer import (
     AnswerSchema,
-    AllAnswersSchema,
 )
 
 
