@@ -11,18 +11,13 @@ from src.models.base import BaseModel
 
 app_settings = get_settings_no_cache()
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
 config = context.config
 
 config.set_main_option("sqlalchemy.url", app_settings.url_asyncpg + "?async_fallback=True")
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# for 'autogenerate' support
 target_metadata = BaseModel.metadata
 
 

@@ -45,5 +45,5 @@ def get_app_settings() -> Settings:
     return Settings()
 
 def get_settings_no_cache() -> Settings:
-    """Получение настроек без кеша."""
+    """Retrieve the application settings without cashe."""
     return Settings()

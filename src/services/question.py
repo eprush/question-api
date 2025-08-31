@@ -8,8 +8,8 @@ from src.schemes.question import (
 
 
 class QuestionService(BaseService[Question]):
-    async def create(self, text: str, **values) -> QuestionSchema:
-        new_obj = await self._repository.create(text=text, **values)
+    async def create(self, text: str) -> QuestionSchema:
+        new_obj = await self._repository.create(text=text)
         return QuestionSchema.model_validate(new_obj)
 
     async def get(self, _id: int) -> QuestionRelSchema:
